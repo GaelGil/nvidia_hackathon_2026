@@ -13,6 +13,7 @@ import {
   Collapse,
   ScrollArea,
   Anchor,
+  Card,
 } from "@mantine/core";
 import { useState } from "react";
 import {
@@ -23,7 +24,6 @@ import {
 } from "react-icons/fi";
 import { LOGO, PROJECT_NAME } from "@/const";
 import { Link } from "@tanstack/react-router";
-import { time } from "console";
 
 type LogSeverity = "high" | "medium" | "low";
 
@@ -79,6 +79,13 @@ const logs: LogItem[] = [
     timestamp: "2026-03-16 10:05:00",
     options: ["Option 1", "option 2"],
   },
+  {
+    id: "7",
+    severity: "low",
+    desc: "inscident",
+    timestamp: "2026-03-16 10:05:00",
+    options: ["Option 1", "option 2"],
+  },
 ];
 
 const severityColors: Record<LogSeverity, string> = {
@@ -96,13 +103,29 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
   const [hovered, setHovered] = useState(false);
 
   const listItems = logs.map((log: LogItem) => (
-    <Group key={log.id} gap="sm" px="md" py="sm" align="center" fz={"14px"}>
-      {/*<Anchor key={severity} href={} target="_blank">*/}
-      <Text c="white" ml={2}>
-        {log.desc}
-      </Text>
-      {/*</Anchor>*/}
-    </Group>
+    <Card key={log.id} shadow="sm" padding="lg" radius="md" withBorder>
+      {/*<Card.Section>
+        <Image
+          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
+          height={160}
+          alt="Norway"
+        />
+      </Card.Section>*/}
+
+      <Group justify="space-between" mt="md" mb="xs">
+        <Text fw={500}>{log.desc}</Text>
+        <Badge color="pink">On Sale</Badge>
+      </Group>
+
+      {/*<Text size="sm" c="dimmed">
+        With Fjord Tours you can explore more of the magical fjord landscapes
+        with tours and activities on and around the fjords of Norway
+      </Text>*/}
+
+      {/*<Button color="blue" fullWidth mt="md" radius="md">
+        Book classic tour now
+      </Button>*/}
+    </Card>
   ));
 
   return (
@@ -147,7 +170,9 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
       {}
       {!collapsed && (
         <>
-          <Box p="sm">{listItems}</Box>
+          <ScrollArea>
+            <Stack p="sm">{listItems}</Stack>
+          </ScrollArea>
         </>
       )}
     </Stack>
