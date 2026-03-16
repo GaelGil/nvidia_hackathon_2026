@@ -4,27 +4,88 @@ import {
   Box,
   Group,
   Text,
-  Anchor,
   Stack,
   Flex,
   Image,
   ActionIcon,
+  Badge,
+  Button,
+  Collapse,
+  ScrollArea,
+  Anchor,
 } from "@mantine/core";
 import { useState } from "react";
-import { FiColumns, FiArrowRight } from "react-icons/fi";
+import {
+  FiColumns,
+  FiArrowRight,
+  FiChevronDown,
+  FiChevronUp,
+} from "react-icons/fi";
 import { LOGO, PROJECT_NAME } from "@/const";
 import { Link } from "@tanstack/react-router";
-const items = [
-  { title: "Research", link: "https://openai.com/research" },
-  { title: "Safety", link: "https://openai.com/safety" },
-  { title: "For Business", link: "https://openai.com/business" },
-  { title: "For Developers", link: "https://openai.com/developers" },
-  { title: "ChatGPT", link: "https://openai.com/chatgpt" },
-  { title: "Sora", link: "https://openai.com/sora" },
-  { title: "Stories", link: "https://openai.com/stories" },
-  { title: "Company", link: "https://openai.com/company" },
-  { title: "News", link: "https://openai.com/news" },
+import { time } from "console";
+
+type LogSeverity = "high" | "medium" | "low";
+
+interface LogItem {
+  id: string;
+  severity: LogSeverity;
+  desc: string;
+  timestamp: string;
+  options: string[];
+}
+
+const logs: LogItem[] = [
+  {
+    id: "1",
+    severity: "high",
+    desc: "inscident",
+    timestamp: "2026-03-16 10:30:00",
+    options: ["Option 1", "Option 2", "Option 3"],
+  },
+  {
+    id: "2",
+    severity: "high",
+    desc: "inscident",
+
+    timestamp: "2026-03-16 10:25:00",
+    options: ["Option 1", "Option 2"],
+  },
+  {
+    id: "3",
+    severity: "medium",
+    desc: "inscident",
+    timestamp: "2026-03-16 10:20:00",
+    options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+  },
+  {
+    id: "4",
+    severity: "medium",
+    desc: "inscident",
+    timestamp: "2026-03-16 10:15:00",
+    options: ["Option 1", "Option 2", "Option 3"],
+  },
+  {
+    id: "5",
+    severity: "low",
+    desc: "inscident",
+    timestamp: "2026-03-16 10:10:00",
+    options: ["Option 1", "Option 2"],
+  },
+  {
+    id: "6",
+    severity: "low",
+    desc: "inscident",
+    timestamp: "2026-03-16 10:05:00",
+    options: ["Option 1", "option 2"],
+  },
 ];
+
+const severityColors: Record<LogSeverity, string> = {
+  high: "red",
+  medium: "yellow",
+  low: "green",
+};
 
 interface HomeSideBarProps {
   collapsed: boolean;
@@ -34,13 +95,13 @@ interface HomeSideBarProps {
 const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
   const [hovered, setHovered] = useState(false);
 
-  const listItems = items.map(({ title, link }) => (
-    <Group key={title} gap="sm" px="md" py="sm" align="center" fz={"14px"}>
-      <Anchor key={title} href={link} target="_blank">
-        <Text c="white" ml={2}>
-          {title}
-        </Text>
-      </Anchor>
+  const listItems = logs.map((log: LogItem) => (
+    <Group key={log.id} gap="sm" px="md" py="sm" align="center" fz={"14px"}>
+      {/*<Anchor key={severity} href={} target="_blank">*/}
+      <Text c="white" ml={2}>
+        {log.desc}
+      </Text>
+      {/*</Anchor>*/}
     </Group>
   ));
 

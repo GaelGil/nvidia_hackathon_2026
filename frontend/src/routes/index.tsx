@@ -28,17 +28,6 @@ function HomePage() {
       padding="md"
       bg={"black"}
     >
-      <AppShell.Header withBorder={false} bg={"black"}>
-        <Group h="100%" px="md" justify="flex-end">
-          {/* <Anchor
-            component={Link}
-            to={loggedIn ? "/chat" : "/auth/login"}
-            underline="never"
-          >
-            <Button radius="xl">{loggedIn ? "Chat" : "Login"}</Button>
-          </Anchor> */}
-        </Group>
-      </AppShell.Header>
       <AppShell.Navbar p="md" withBorder={false} bg={"black"}>
         <HomeSideBar collapsed={collapsed} toggle={toggleCollapsed} />
       </AppShell.Navbar>
