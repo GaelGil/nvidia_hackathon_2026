@@ -32,7 +32,12 @@ interface LogItem {
   severity: LogSeverity;
   desc: string;
   timestamp: string;
-  options: string[];
+  options: LogOption[];
+}
+
+interface LogOption {
+  id: string;
+  desc: string;
 }
 
 const logs: LogItem[] = [
@@ -41,7 +46,7 @@ const logs: LogItem[] = [
     severity: "high",
     desc: "inscident",
     timestamp: "2026-03-16 10:30:00",
-    options: ["Option 1", "Option 2", "Option 3"],
+    options: [{ id: "1", desc: "option1" } as LogOption],
   },
   {
     id: "2",
@@ -49,42 +54,60 @@ const logs: LogItem[] = [
     desc: "inscident",
 
     timestamp: "2026-03-16 10:25:00",
-    options: ["Option 1", "Option 2"],
+    options: [
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "2", desc: "option1" } as LogOption,
+    ],
   },
   {
     id: "3",
     severity: "medium",
     desc: "inscident",
     timestamp: "2026-03-16 10:20:00",
-    options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+    options: [
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "1", desc: "option1" } as LogOption,
+    ],
   },
   {
     id: "4",
     severity: "medium",
     desc: "inscident",
     timestamp: "2026-03-16 10:15:00",
-    options: ["Option 1", "Option 2", "Option 3"],
+    options: [
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "1", desc: "option1" } as LogOption,
+    ],
   },
   {
     id: "5",
     severity: "low",
     desc: "inscident",
     timestamp: "2026-03-16 10:10:00",
-    options: ["Option 1", "Option 2"],
+    options: [
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "1", desc: "option1" } as LogOption,
+    ],
   },
   {
     id: "6",
     severity: "low",
     desc: "inscident",
     timestamp: "2026-03-16 10:05:00",
-    options: ["Option 1", "option 2"],
+    options: [
+      { id: "1", desc: "option1" } as LogOption,
+      { id: "1", desc: "option1" } as LogOption,
+    ],
   },
   {
     id: "7",
     severity: "low",
     desc: "inscident",
     timestamp: "2026-03-16 10:05:00",
-    options: ["Option 1", "option 2"],
+    options: [{ id: "1", desc: "option1" } as LogOption],
   },
 ];
 
@@ -103,8 +126,9 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
   const [hovered, setHovered] = useState(false);
 
   const listItems = logs.map((log: LogItem) => (
-    <Card key={log.id} shadow="sm" padding="lg" radius="md" withBorder>
-      {/*<Card.Section>
+    <ScrollArea>
+      <Card key={log.id} shadow="sm" padding="lg" radius="md" withBorder>
+        {/*<Card.Section>
         <Image
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
           height={160}
@@ -112,20 +136,21 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
         />
       </Card.Section>*/}
 
-      <Group justify="space-between" mt="md" mb="xs">
-        <Text fw={500}>{log.desc}</Text>
-        <Badge color="pink">On Sale</Badge>
-      </Group>
+        <Group justify="space-between" mt="md" mb="xs">
+          <Text fw={500}>{log.desc}</Text>
+          <Badge color="pink">On Sale</Badge>
+        </Group>
 
-      {/*<Text size="sm" c="dimmed">
+        {/*<Text size="sm" c="dimmed">
         With Fjord Tours you can explore more of the magical fjord landscapes
         with tours and activities on and around the fjords of Norway
       </Text>*/}
 
-      {/*<Button color="blue" fullWidth mt="md" radius="md">
+        {/*<Button color="blue" fullWidth mt="md" radius="md">
         Book classic tour now
       </Button>*/}
-    </Card>
+      </Card>
+    </ScrollArea>
   ));
 
   return (
@@ -170,9 +195,9 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
       {}
       {!collapsed && (
         <>
-          <ScrollArea>
-            <Stack p="sm">{listItems}</Stack>
-          </ScrollArea>
+          {/*<ScrollArea>*/}
+          <Stack p="sm">{listItems}</Stack>
+          {/*</ScrollArea>*/}
         </>
       )}
     </Stack>
