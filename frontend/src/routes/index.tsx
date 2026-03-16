@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const [collapsed, { toggle: toggleCollapsed }] = useDisclosure(false);
 
-  const fullWidth = 200;
+  const fullWidth = 400;
   const collapsedWidth = 60;
 
   const sidebarWidth = collapsed ? collapsedWidth : fullWidth;

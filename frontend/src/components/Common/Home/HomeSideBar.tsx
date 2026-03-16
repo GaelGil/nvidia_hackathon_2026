@@ -138,6 +138,8 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
 
         <Group justify="space-between" mt="md" mb="xs">
           <Text fw={500}>{log.desc}</Text>
+          <Text fw={500}>{log.timestamp}</Text>
+
           <Badge color="pink">On Sale</Badge>
         </Group>
 
