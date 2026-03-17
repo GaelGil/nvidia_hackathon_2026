@@ -43,7 +43,7 @@ const logs: LogItem[] = [
 		desc: "Traffic Incident - Multi-vehicle collision",
 		timestamp: "2026-03-16 10:30:00",
 		options: [{ id: "1", desc: "option1" } as LogOption],
-		cameraId: "SF-I80-001",
+		cameraId: "0",
 		detailedDesc: "Multi-vehicle collision reported at Bay Bridge. Multiple cars involved. Emergency services dispatched. Traffic backed up for 2 miles. Lane closures in effect.",
 	},
 	{
@@ -55,7 +55,7 @@ const logs: LogItem[] = [
 			{ id: "1", desc: "option1" } as LogOption,
 			{ id: "2", desc: "option1" } as LogOption,
 		],
-		cameraId: "SF-GoldenGate-002",
+		cameraId: "1",
 		detailedDesc: "Pedestrian struck by vehicle near Golden Gate Bridge. Victim is conscious but injured. Ambulance en route. Scene is being secured by traffic control.",
 	},
 	{
@@ -69,7 +69,7 @@ const logs: LogItem[] = [
 			{ id: "1", desc: "option1" } as LogOption,
 			{ id: "1", desc: "option1" } as LogOption,
 		],
-		cameraId: "SF-101-003",
+		cameraId: "2",
 		detailedDesc: "Heavy traffic congestion due to rush hour. Vehicles moving slowly. No incidents detected. Expected to clear in 30 minutes.",
 	},
 	{
@@ -82,7 +82,7 @@ const logs: LogItem[] = [
 			{ id: "1", desc: "option1" } as LogOption,
 			{ id: "1", desc: "option1" } as LogOption,
 		],
-		cameraId: "SF-280-004",
+		cameraId: "3",
 		detailedDesc: "Vehicle stalled on right lane. Driver is safe and awaiting assistance. Roadside assistance has been notified. Minor traffic delay.",
 	},
 	{
@@ -94,7 +94,7 @@ const logs: LogItem[] = [
 			{ id: "1", desc: "option1" } as LogOption,
 			{ id: "1", desc: "option1" } as LogOption,
 		],
-		cameraId: "SF-101-005",
+		cameraId: "4",
 		detailedDesc: "Traffic conditions are normal. All lanes are flowing smoothly. No incidents reported in this area.",
 	},
 	{
@@ -106,7 +106,7 @@ const logs: LogItem[] = [
 			{ id: "1", desc: "option1" } as LogOption,
 			{ id: "1", desc: "option1" } as LogOption,
 		],
-		cameraId: "SF-GoldenGate-001",
+		cameraId: "5",
 		detailedDesc: "Dense fog advisory in effect. Reduced visibility for drivers. Speed reduction recommended. Please use caution.",
 	},
 	{
@@ -115,7 +115,7 @@ const logs: LogItem[] = [
 		desc: "Construction Zone - Lane shift",
 		timestamp: "2026-03-16 10:05:00",
 		options: [{ id: "1", desc: "option1" } as LogOption],
-		cameraId: "SF-80-006",
+		cameraId: "6",
 		detailedDesc: "Construction zone active. Lane shift in effect. Workers present. Slow down to 25 mph. Expected completion in 2 hours.",
 	},
 ];
