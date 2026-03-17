@@ -10,7 +10,7 @@ type CameraData = {
   route: string;
   direction: string;
   current_image_url: string;
-  streaming_video_url: string;
+  current_video_url: string;
   in_service: boolean;
 };
 
@@ -62,12 +62,11 @@ export default function LeafletMap() {
               <Text>
                 Status: {camera.in_service ? "In Service" : "Out of Service"}
               </Text>
-              <Image
-                src={camera.current_image_url}
-                alt={camera.name}
-                w={300}
-                mt="xs"
-              />
+              {camera.current_video_url && (
+                <Text size="sm" c="blue" mt="xs">
+                  Video: {camera.current_video_url}
+                </Text>
+              )}
             </Box>
           </Popup>
         </CircleMarker>
