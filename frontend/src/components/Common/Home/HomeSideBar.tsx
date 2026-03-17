@@ -192,7 +192,7 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
 	));
 
 	return (
-		<Stack>
+		<Stack justify="space-between" style={{ height: "100%" }}>
 			{/* Controls */}
 			<Flex
 				align="center"
@@ -230,14 +230,12 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
 					</>
 				)}
 			</Flex>
-			{}
-			{!collapsed && (
-				<>
-					{/*<ScrollArea>*/}
-					<Stack p="sm">{listItems}</Stack>
-					{/*</ScrollArea>*/}
-				</>
-			)}
+	{}
+		{!collapsed && (
+			<ScrollArea style={{ flex: 1 }}>
+				<Stack p="sm">{listItems}</Stack>
+			</ScrollArea>
+		)}
 		</Stack>
 	);
 };
