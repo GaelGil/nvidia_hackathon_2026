@@ -34,6 +34,7 @@ import {
   startMonitoring,
   stopMonitoring,
 } from "@/api";
+import { mockLogs } from "@/data/mockLogs";
 
 // ---------------------------------------------------------------------------
 // Severity badge
@@ -125,64 +126,10 @@ function IncidentCard({ report }: { report: IncidentReport }) {
 }
 
 // ---------------------------------------------------------------------------
-// Demo log items (for "View Details" link)
+// Severity badge
 // ---------------------------------------------------------------------------
 
-type LogSeverity = "high" | "medium" | "low";
-
-interface DemoLog {
-  id: string;
-  severity: LogSeverity;
-  desc: string;
-  timestamp: string;
-}
-
-const demoLogs: DemoLog[] = [
-  {
-    id: "1",
-    severity: "high",
-    desc: "🚨 Multi-vehicle collision — I-80 Bay Bridge",
-    timestamp: "2026-03-16 17:30:00",
-  },
-  {
-    id: "2",
-    severity: "high",
-    desc: "🚨 Pedestrian incident — Golden Gate Bridge",
-    timestamp: "2026-03-16 17:25:00",
-  },
-  {
-    id: "3",
-    severity: "medium",
-    desc: "⚠ Stalled vehicle blocking lane — US-101 SB",
-    timestamp: "2026-03-16 17:20:00",
-  },
-  {
-    id: "4",
-    severity: "medium",
-    desc: "⚠ Debris on roadway — I-280 NB Daly City",
-    timestamp: "2026-03-16 17:15:00",
-  },
-  {
-    id: "5",
-    severity: "low",
-    desc: "✓ Normal traffic flow — I-101 NB",
-    timestamp: "2026-03-16 17:10:00",
-  },
-  {
-    id: "6",
-    severity: "low",
-    desc: "✓ Dense fog advisory — Golden Gate",
-    timestamp: "2026-03-16 17:05:00",
-  },
-  {
-    id: "7",
-    severity: "low",
-    desc: "✓ Construction zone — I-80 EB",
-    timestamp: "2026-03-16 17:00:00",
-  },
-];
-
-const SEVERITY_COLOR_MAP: Record<LogSeverity, string> = {
+const SEVERITY_COLOR_MAP: Record<string, string> = {
   high: "red",
   medium: "orange",
   low: "green",
@@ -403,7 +350,7 @@ const HomeSideBar: React.FC<HomeSideBarProps> = ({ collapsed, toggle }) => {
             <Text fz="xs" fw={700} c="white" px={4} mt="md">
               📋 INCIDENT LOG
             </Text>
-            {demoLogs.map((log) => (
+            {mockLogs.map((log) => (
               <Link
                 key={log.id}
                 to="/log/$logId"
