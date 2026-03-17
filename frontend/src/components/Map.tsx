@@ -1,5 +1,5 @@
 import { Box, Image, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
 
 type CameraData = {
@@ -13,6 +13,43 @@ type CameraData = {
   current_video_url: string;
   in_service: boolean;
 };
+
+function VideoPlayer({ videoUrl }: { videoUrl: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!videoRef.current || !videoUrl) return;
+
+    const video = videoRef.current;
+    
+    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = videoUrl;
+      video.addEventListener("loadedmetadata", () => {
+        video.play().catch(() => {});
+      });
+    } else {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/hls.js@latest";
+      script.onload = () => {
+        const hls = new (window as unknown as { Hls: new () => { loadSource: (s: string) => void; attachMedia: (m: HTMLMediaElement) => void; on: (e: string, c: () => void) => void } }).Hls();
+        hls.loadSource(videoUrl);
+        hls.attachMedia(video);
+        hls.on("hlsManifestParsed", () => {
+          video.play().catch(() => {});
+        });
+      };
+      document.head.appendChild(script);
+    }
+  }, [videoUrl]);
+
+  return (
+    <video
+      ref={videoRef}
+      controls
+      style={{ width: "100%", maxWidth: 320, marginTop: 8 }}
+    />
+  );
+}
 
 export default function LeafletMap() {
   const [cameras, setCameras] = useState<CameraData[]>([]);
@@ -62,10 +99,16 @@ export default function LeafletMap() {
               <Text>
                 Status: {camera.in_service ? "In Service" : "Out of Service"}
               </Text>
+              {camera.current_image_url && (
+                <Image
+                  src={camera.current_image_url}
+                  alt={camera.name}
+                  w={300}
+                  mt="xs"
+                />
+              )}
               {camera.current_video_url && (
-                <Text size="sm" c="blue" mt="xs">
-                  Video: {camera.current_video_url}
-                </Text>
+                <VideoPlayer videoUrl={camera.current_video_url} />
               )}
             </Box>
           </Popup>
