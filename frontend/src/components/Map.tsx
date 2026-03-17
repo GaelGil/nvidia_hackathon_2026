@@ -24,30 +24,30 @@ function VideoPlayer({ videoUrl }: { videoUrl: string }) {
 
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
-      video.addEventListener("loadedmetadata", () => {
-        video.play().catch(() => {});
-      });
-    } else {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/hls.js@latest";
-      script.onload = () => {
-        const hls = new (
-          window as unknown as {
-            Hls: new () => {
-              loadSource: (s: string) => void;
-              attachMedia: (m: HTMLMediaElement) => void;
-              on: (e: string, c: () => void) => void;
-            };
-          }
-        ).Hls();
+      return;
+    }
+
+    // @ts-expect-error - hls.js is loaded from CDN
+    if (window.Hls && window.Hls.isSupported()) {
+      // @ts-expect-error - hls.js is loaded from CDN
+      const hls = new window.Hls();
+      hls.loadSource(videoUrl);
+      hls.attachMedia(video);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/hls.js@1";
+    script.onload = () => {
+      // @ts-expect-error - hls.js is loaded from CDN
+      if (window.Hls && window.Hls.isSupported()) {
+        // @ts-expect-error - hls.js is loaded from CDN
+        const hls = new window.Hls();
         hls.loadSource(videoUrl);
         hls.attachMedia(video);
-        hls.on("hlsManifestParsed", () => {
-          video.play().catch(() => {});
-        });
-      };
-      document.head.appendChild(script);
-    }
+      }
+    };
+    document.head.appendChild(script);
   }, [videoUrl]);
 
   return (
@@ -68,12 +68,6 @@ export default function LeafletMap() {
       .then((data) => setCameras(data))
       .catch((err) => console.error("Failed to load cameras:", err));
   }, []);
-
-  // https://sfcam.live/
-  // https://ops.alertcalifornia.org/
-  // https://www.extranomical.com/live-web-cams/
-  // https://www.sanfranciscopolice.org/publicsafetycameras
-  // https://www.parksconservancy.org/parks/park-web-cams
 
   return (
     <MapContainer
@@ -107,17 +101,16 @@ export default function LeafletMap() {
               <Text>
                 Status: {camera.in_service ? "In Service" : "Out of Service"}
               </Text>
-              {camera.current_image_url && (
+              {camera.current_video_url ? (
+                <VideoPlayer videoUrl={camera.current_video_url} />
+              ) : camera.current_image_url ? (
                 <Image
                   src={camera.current_image_url}
                   alt={camera.name}
                   w={300}
                   mt="xs"
                 />
-              )}
-              {camera.current_video_url && (
-                <VideoPlayer videoUrl={camera.current_video_url} />
-              )}
+              ) : null}
             </Box>
           </Popup>
         </CircleMarker>
