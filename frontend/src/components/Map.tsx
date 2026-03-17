@@ -21,7 +21,7 @@ function VideoPlayer({ videoUrl }: { videoUrl: string }) {
     if (!videoRef.current || !videoUrl) return;
 
     const video = videoRef.current;
-    
+
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
       video.addEventListener("loadedmetadata", () => {
@@ -31,7 +31,15 @@ function VideoPlayer({ videoUrl }: { videoUrl: string }) {
       const script = document.createElement("script");
       script.src = "https://cdn.jsdelivr.net/npm/hls.js@latest";
       script.onload = () => {
-        const hls = new (window as unknown as { Hls: new () => { loadSource: (s: string) => void; attachMedia: (m: HTMLMediaElement) => void; on: (e: string, c: () => void) => void } }).Hls();
+        const hls = new (
+          window as unknown as {
+            Hls: new () => {
+              loadSource: (s: string) => void;
+              attachMedia: (m: HTMLMediaElement) => void;
+              on: (e: string, c: () => void) => void;
+            };
+          }
+        ).Hls();
         hls.loadSource(videoUrl);
         hls.attachMedia(video);
         hls.on("hlsManifestParsed", () => {
