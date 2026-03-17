@@ -1,72 +1,124 @@
-import { Box, Image, Text } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { Box, Button, Image, Loader, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
+import {
+  type Camera,
+  type IncidentReport,
+  analyzeCamera,
+  getCameras,
+  severityColor,
+} from "@/api";
 
-type CameraData = {
-  name: string;
-  county: string;
-  latitude: number;
-  longitude: number;
-  route: string;
-  direction: string;
-  current_image_url: string;
-  current_video_url: string;
-  in_service: boolean;
-};
+// Per-camera scan state
+type ScanState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "done"; report: IncidentReport }
+  | { status: "error"; message: string };
 
-function VideoPlayer({ videoUrl }: { videoUrl: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+function ScanButton({ cam }: { cam: Camera }) {
+  const [scan, setScan] = useState<ScanState>({ status: "idle" });
 
-  useEffect(() => {
-    if (!videoRef.current || !videoUrl) return;
-
-    const video = videoRef.current;
-
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = videoUrl;
-      return;
+  async function handleScan() {
+    setScan({ status: "loading" });
+    try {
+      const report = await analyzeCamera(cam.id);
+      setScan({ status: "done", report });
+    } catch (e: unknown) {
+      setScan({
+        status: "error",
+        message: e instanceof Error ? e.message : "Unknown error",
+      });
     }
-
-    // @ts-expect-error - hls.js is loaded from CDN
-    if (window.Hls && window.Hls.isSupported()) {
-      // @ts-expect-error - hls.js is loaded from CDN
-      const hls = new window.Hls();
-      hls.loadSource(videoUrl);
-      hls.attachMedia(video);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/hls.js@1";
-    script.onload = () => {
-      // @ts-expect-error - hls.js is loaded from CDN
-      if (window.Hls && window.Hls.isSupported()) {
-        // @ts-expect-error - hls.js is loaded from CDN
-        const hls = new window.Hls();
-        hls.loadSource(videoUrl);
-        hls.attachMedia(video);
-      }
-    };
-    document.head.appendChild(script);
-  }, [videoUrl]);
+  }
 
   return (
-    <video
-      ref={videoRef}
-      controls
-      style={{ width: "100%", maxWidth: 320, marginTop: 8 }}
-    />
+    <Box mt="xs">
+      {scan.status === "idle" && (
+        <Button size="xs" variant="filled" color="green" onClick={handleScan}>
+          Scan with Nemotron
+        </Button>
+      )}
+
+      {scan.status === "loading" && (
+        <Box style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <Loader size="xs" color="green" />
+          <Text fz="xs" c="dimmed">
+            Analyzing…
+          </Text>
+        </Box>
+      )}
+
+      {scan.status === "error" && (
+        <Box>
+          <Text fz="xs" c="red">
+            Error: {scan.message}
+          </Text>
+          <Button
+            size="xs"
+            variant="subtle"
+            color="gray"
+            mt={4}
+            onClick={handleScan}
+          >
+            Retry
+          </Button>
+        </Box>
+      )}
+
+      {scan.status === "done" && (
+        <Box
+          p="xs"
+          style={{
+            borderRadius: 6,
+            border: `1px solid ${severityColor(scan.report.severity)}`,
+            background: "#111",
+          }}
+        >
+          <Text
+            fz="xs"
+            fw={700}
+            style={{ color: severityColor(scan.report.severity) }}
+          >
+            {scan.report.is_incident
+              ? `⚠ ${scan.report.incident_type.replace(/_/g, " ").toUpperCase()} — Sev ${scan.report.severity}/10`
+              : "✓ No Incident"}
+          </Text>
+          <Text fz="xs" c="dimmed" mt={2}>
+            {scan.report.description}
+          </Text>
+          {scan.report.recommended_response.length > 0 && (
+            <Text fz="xs" c="yellow" mt={4}>
+              → {scan.report.recommended_response.join(", ")}
+            </Text>
+          )}
+          <Text fz="xs" c="dimmed" mt={2}>
+            Confidence: {Math.round(scan.report.confidence * 100)}%
+          </Text>
+          <Button
+            size="xs"
+            variant="subtle"
+            color="gray"
+            mt={4}
+            onClick={handleScan}
+          >
+            Re-scan
+          </Button>
+        </Box>
+      )}
+    </Box>
   );
 }
 
 export default function LeafletMap() {
-  const [cameras, setCameras] = useState<CameraData[]>([]);
+  const [cameras, setCameras] = useState<Camera[]>([]);
 
   useEffect(() => {
-    fetch("/sf_cameras.json")
-      .then((res) => res.json())
-      .then((data) => setCameras(data))
-      .catch((err) => console.error("Failed to load cameras:", err));
+    getCameras(4) // District 4 = Bay Area
+      .then((cams) => setCameras(cams))
+      .catch((err) =>
+        console.error("Failed to load cameras from backend:", err),
+      );
   }, []);
 
   return (
@@ -81,36 +133,38 @@ export default function LeafletMap() {
         subdomains="abcd"
       />
 
-      {cameras.map((camera, index) => (
+      {cameras.map((cam) => (
         <CircleMarker
-          key={index}
-          center={[camera.latitude, camera.longitude]}
+          key={cam.id}
+          center={[cam.lat, cam.lon]}
           radius={6}
           pathOptions={{
             color: "#000",
-            fillColor: camera.in_service ? "#00ff00" : "#ff0000",
+            fillColor: "#00ff00",
             fillOpacity: 1,
           }}
         >
           <Popup>
-            <Box>
-              <Text fw={500}>{camera.name}</Text>
-              <Text>Route: {camera.route}</Text>
-              <Text>Direction: {camera.direction}</Text>
-              <Text>County: {camera.county}</Text>
-              <Text>
-                Status: {camera.in_service ? "In Service" : "Out of Service"}
+            <Box style={{ minWidth: 220 }}>
+              <Text fw={600} fz="sm">
+                {cam.name}
               </Text>
-              {camera.current_video_url ? (
-                <VideoPlayer videoUrl={camera.current_video_url} />
-              ) : camera.current_image_url ? (
+              <Text fz="xs" c="dimmed">
+                Route {cam.route} {cam.direction}
+              </Text>
+              <Text fz="xs" c="dimmed">
+                {cam.county} — District {cam.district}
+              </Text>
+              {cam.image_url && (
                 <Image
-                  src={camera.current_image_url}
-                  alt={camera.name}
-                  w={300}
+                  src={cam.image_url}
+                  alt={cam.name}
+                  w={280}
                   mt="xs"
+                  radius="sm"
                 />
-              ) : null}
+              )}
+              <ScanButton cam={cam} />
             </Box>
           </Popup>
         </CircleMarker>
