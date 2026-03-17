@@ -1,4 +1,4 @@
-import { Box, Button, Image, Loader, Text } from "@mantine/core";
+import { Box, Button, Loader, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
 import {
@@ -8,6 +8,7 @@ import {
   getCameras,
   severityColor,
 } from "@/api";
+import VideoPlayer from "./VideoPlayer";
 
 // Per-camera scan state
 type ScanState =
@@ -155,13 +156,11 @@ export default function LeafletMap() {
               <Text fz="xs" c="dimmed">
                 {cam.county} — District {cam.district}
               </Text>
-              {cam.image_url && (
-                <Image
-                  src={cam.image_url}
+              {(cam.stream_url || cam.image_url) && (
+                <VideoPlayer
+                  streamUrl={cam.stream_url || ""}
+                  imageUrl={cam.image_url}
                   alt={cam.name}
-                  w={280}
-                  mt="xs"
-                  radius="sm"
                 />
               )}
               <ScanButton cam={cam} />
